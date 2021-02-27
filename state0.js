@@ -1,10 +1,10 @@
 var demo = {};
 var centerX = 1500/2, centerY = 1000/2;
-var Michael, accel = 400, scaleNum = .2, increment = 2;
+var Michael, vel = 400, scaleNum = .2, increment = 2;
 var poro, poroGroup;
 var map;
 //Jumping Variables
-var jumpTimer = 0, jumpStart = false, intialJump = 150, incrementJump = 50, jumpDelay = 100;
+var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -38,7 +38,7 @@ demo.state0.prototype = {
         Michael.anchor.setTo(0.5,0.5);
         Michael.scale.setTo(.2,.2);
         game.physics.enable(Michael);
-        Michael.body.gravity.y = 500;
+        Michael.body.gravity.y = 1500;
         //Michael.body.bounce.y = .3;
         Michael.body.drag.x = 600;
         Michael.body.collideWorldBounds = true;
@@ -99,31 +99,21 @@ demo.state0.prototype = {
 
         //Movement 
         if(cursors.up.isDown && Michael.body.onFloor() && game.time.now > jumpTimer){
-            Michael.body.velocity.y = -intialJump;
-            jumpStart = true;
+            Michael.body.velocity.y = -jumpVelocity;
             jumpTimer = game.time.now + jumpDelay;
         }
-        if(jumpStart = true)
-        {
-            if(cursors.up.isDown && game.time.now < jumpTimer){
-                Michael.body.velocity.y += -incrementJump;
-            }
-            else{
-                jumpStart = false;
-            }
-        }
-
+        
         if(cursors.left.isDown){
-            Michael.body.acceleration.x = -accel;
+            Michael.body.velocity.x = -vel;
             Michael.scale.setTo(-.2,.2);
             
         }
         else if(cursors.right.isDown){
-            Michael.body.acceleration.x = accel;
+            Michael.body.velocity.x = vel;
             Michael.scale.setTo(.2,.2);
         }
         else{
-            Michael.body.acceleration.x = 0;
+            Michael.body.velocity.x = 0;
         }
 
         // //Check to leave Area
