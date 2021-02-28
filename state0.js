@@ -3,6 +3,7 @@ var centerX = 1500/2, centerY = 1000/2;
 var Michael, vel = 400, scaleNum = .2, increment = 2;
 var poro, poroGroup;
 var map;
+var Land;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
 
