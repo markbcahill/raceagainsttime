@@ -9,6 +9,7 @@ var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
+var Winter;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -22,8 +23,8 @@ demo.state0.prototype = {
         game.load.image('SummerBg', 'assets/backgrounds/SummerBackground.png');
         game.load.image('WinterBg', 'assets/backgrounds/WinterBackground.png');
         game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 560);
-        game.load.spritesheet('drawbridge', 'assets/SpriteSheets/drawbridge.png', 213, 213);
         game.load.spritesheet('lever', 'assets/SpriteSheets/lever.png', 240, 165);
+        game.load.image('drawbridgeUp', 'assets/Sprites/drawbridgeUp.png',25,213);
         game.load.image('drawbridgeDown', 'assets/Sprites/drawbridgeDown.png',213,25);
     },
     create: function(){
@@ -74,7 +75,7 @@ demo.state0.prototype = {
         game.physics.enable(assistantGroup);
     
         //Add drawbridge/lever
-        drawbridge = game.add.sprite(2140, 320, 'drawbridge');
+        drawbridge = game.add.sprite(2290, 300, 'drawbridgeUp');
         drawbridge.anchor.setTo(0.5,0.5);
         drawbridge.scale.setTo(1.6,1.6);
         drawbridge.enableBody = true;
@@ -105,9 +106,13 @@ demo.state0.prototype = {
         assistantGroup.callAll('animations.add', 'animations', 'idel', [0,1]);
         assistantGroup.callAll('play', null, 'idel', 10, true);
 
-        //Animating drawbridge
-        drawbridge.animations.add('drop', [0,1,2]);
+        //Animating lever
         lever.animations.add('shift', [0,1,2]);
+        
+        //Set collisions between Humprey and tree
+        map.setCollisionBetween(94, 97, true, 'Winter');
+        map.forEach(function(tile) {  if (tile.index === 94 || tile.index === 95 || tile.index === 96 || tile.index === 97) {    tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+
 
         //Set up camera
         game.camera.follow(Humphrey);
@@ -129,7 +134,9 @@ demo.state0.prototype = {
     update: function(){
         game.physics.arcade.collide(Humphrey, Land, function(){});
         game.physics.arcade.collide(assistantGroup, Land, function(){});
+        game.physics.arcade.collide(Humphrey, drawbridge, function(){});
         game.physics.arcade.collide(Humphrey, drawbridgeDown, function(){});
+        game.physics.arcade.collide(Humphrey, Winter, function(){});
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
@@ -225,10 +232,8 @@ demo.state0.prototype = {
             if (lever.frame == 0) {
                 lever.animations.play('shift', 6, true);
                 lever.animations.stop('shift');
-                drawbridge.animations.play('drop', 6, true);
-                drawbridge.animations.stop('drop');
+                drawbridge.visible =false;
                 lever.frame = 2;
-                drawbridge.frame =2;
     
                 drawbridgeDown = game.add.sprite(2140, 460, 'drawbridgeDown');
                 drawbridgeDown.anchor.setTo(0.5,0.5);
@@ -244,6 +249,7 @@ demo.state0.prototype = {
                 lever.frame = 0;
                 drawbridge.frame = 0;
                 drawbridgeDown.visible = false;
+                drawbridge.visible =true;
             };
             
         }
