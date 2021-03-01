@@ -13,9 +13,9 @@ demo.state0.prototype = {
         game.load.tilemap('LevelOne', 'assets/tilemaps/FirstLevel.json', 
         null, Phaser.Tilemap.TILED_JSON);
         game.load.image('GroundTileSet' , 'assets/tilemaps/GroundTileSet.png');
-        game.load.spritesheet('Humphrey', 'assets/SpriteSheets/HumphreySpriteSheet.png', 356, 549);
+        game.load.spritesheet('Humphrey', 'assets/SpriteSheets/HumphreySpriteSheet.png', 350, 560);
         game.load.image('SR', 'assets/backgrounds/BandalCity.png');
-        game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 531);
+        game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 560);
     },
     create: function(){
         //Start scene
@@ -68,7 +68,7 @@ demo.state0.prototype = {
         assistantGroup.setAll('scale.x', assistScale);
         assistantGroup.setAll('scale.y', assistScale);
         assistantGroup.callAll('animations.add', 'animations', 'idel', [0,1]);
-        assistantGroup.callAll('play', null, 'idel', 6, true);
+        assistantGroup.callAll('play', null, 'idel', 10, true);
 
         //Set up camera
         game.camera.follow(Humphrey);
@@ -89,7 +89,7 @@ demo.state0.prototype = {
 
         //Walk animiation
         if(cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
-            Humphrey.animations.play('walk', 6, true);
+            Humphrey.animations.play('walk', 10, true);
             // if(Humphrey.angle >= 15 || Humphrey.angle <= -15){
             //     increment = increment * -1;
             // }
