@@ -7,7 +7,7 @@ var bg;
 var LevelTime = 5, sec = 0, mil = 0, start = false;
 var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
-var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
+var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -74,7 +74,8 @@ demo.state0.prototype = {
         //assistantGroup.create(325, 300, 'assistant');
         assistantGroup.create(550, 500, 'assistant'); 
         assistantGroup.create(1000, 500, 'assistant');
-        assistantGroup.create(1500, 500, 'assistant');
+        assistantGroup.create(1400, 100, 'assistant');
+        assistantGroup.create(2400, 100, 'assistant');
 
         //Animate assistants
         assistantGroup.setAll('body.gravity.y', 500);
@@ -91,7 +92,7 @@ demo.state0.prototype = {
         //Set up timer
         timer = game.add.text(game.camera.x+100, game.camera.y+200, LevelTime + ":" + sec + ":" + mil);
         timer.fixedToCamera = true;
-        timer.cameraOffset.setTo(500,0);
+        timer.cameraOffset.setTo(50,0);
 
         //Set up score
         score = game.add.text(game.camera.x+200, game.camera.y+200, 'assistants:' + assistants);
