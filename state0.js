@@ -3,9 +3,10 @@ var centerX = 800/2, centerY = 800/2;
 var Humphrey, vel = 400, humScale = .2, increment = 2;
 var assistant, assistantGroup, assistScale = .2;
 var map;
+var bg;
 var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
-var jumpTimer = 0, jumpVelocity = 250, jumpDelay = 500;
+var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -13,8 +14,11 @@ demo.state0.prototype = {
         game.load.tilemap('LevelOne', 'assets/tilemaps/FirstLevel.json', 
         null, Phaser.Tilemap.TILED_JSON);
         game.load.image('GroundTileSet' , 'assets/tilemaps/GroundTileSet.png');
+        game.load.image('treeTiles', 'assets/tilemaps/treeTiles.png');
+        game.load.image('winterTreeTiles', 'assets/tilemaps/winterTreeTiles.png');
         game.load.spritesheet('Humphrey', 'assets/SpriteSheets/HumphreySpriteSheet.png', 350, 560);
-        game.load.image('SR', 'assets/backgrounds/BandalCity.png');
+        game.load.image('SummerBg', 'assets/backgrounds/SummerBackground.png');
+        game.load.image('WinterBg', 'assets/backgrounds/WinterBackground.png');
         game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 560);
     },
     create: function(){
@@ -24,15 +28,21 @@ demo.state0.prototype = {
         addChangeStateEventLister();
         game.world.setBounds(0,0, 3200, 800);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        var bg = game.add.sprite(0,0, 'SR');
+        bg = game.add.sprite(0,0);
+        bg.loadTexture('WinterBg');
+        bg.loadTexture('SummerBg');
+
 
         map = game.add.tilemap('LevelOne');
         map.addTilesetImage('GroundTileSet');
+        map.addTilesetImage('treeTiles');
+        map.addTilesetImage('winterTreeTiles')
         
-        Land = map.createLayer('Land');
+        Winter = map.createLayer('Winter'); 
+        Winter.kill();
+        Summer = map.createLayer('Summer');
+        Land = map.createLayer('Base');
         Land.resizeWorld();
-
-        Slopes = map.createLayer('Slopes');
 
         map.setCollisionBetween(1, 5, true, Land);
 
@@ -143,10 +153,16 @@ demo.state0.prototype = {
         if(CurrentTime == 1){
             map.swap(1, 3);
             CurrentTime = 3;
+            Summer.kill();
+            Winter.revive();
+            bg.loadTexture("WinterBg");
         }
         else{
             map.swap(3,1);
             CurrentTime = 1;
+            Winter.kill();
+            Summer.revive();
+            bg.loadTexture("SummerBg");
         }
         
     }
