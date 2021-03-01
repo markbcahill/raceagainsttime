@@ -5,7 +5,7 @@ var poro, poroGroup;
 var map;
 var Land, Slopes;
 //Jumping Variables
-var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
+var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
