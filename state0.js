@@ -8,6 +8,7 @@ var LevelTime = 5, sec = 0, mil = 0, start = false;
 var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
+var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -21,6 +22,9 @@ demo.state0.prototype = {
         game.load.image('SummerBg', 'assets/backgrounds/SummerBackground.png');
         game.load.image('WinterBg', 'assets/backgrounds/WinterBackground.png');
         game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 560);
+        game.load.spritesheet('drawbridge', 'assets/SpriteSheets/drawbridge.png', 213, 213);
+        game.load.spritesheet('lever', 'assets/SpriteSheets/lever.png', 240, 165);
+        game.load.image('drawbridgeDown', 'assets/Sprites/drawbridgeDown.png',213,25);
     },
     create: function(){
         //Start scene
@@ -68,6 +72,22 @@ demo.state0.prototype = {
         assistantGroup.enableBody = true;
         assistantGroup.physicsBodyType = Phaser.Physics.ARCADE;
         game.physics.enable(assistantGroup);
+    
+        //Add drawbridge/lever
+        drawbridge = game.add.sprite(2140, 320, 'drawbridge');
+        drawbridge.anchor.setTo(0.5,0.5);
+        drawbridge.scale.setTo(1.6,1.6);
+        drawbridge.enableBody = true;
+        drawbridge.physicsBodyType = Phaser.Physics.ARCADE;
+        game.physics.enable(drawbridge);
+        drawbridge.body.immovable = true;
+        
+        lever = game.add.sprite(1625, 195, 'lever');
+        lever.anchor.setTo(0.5,0.5);
+        lever.scale.setTo(0.4,0.4);
+        lever.enableBody = true;
+        lever.physicsBodyType = Phaser.Physics.ARCADE;
+        game.physics.enable(lever);
 
         //Place in world according to save state
         assistantGroup.create(150, 500, 'assistant');
@@ -84,6 +104,10 @@ demo.state0.prototype = {
         assistantGroup.setAll('scale.y', assistScale);
         assistantGroup.callAll('animations.add', 'animations', 'idel', [0,1]);
         assistantGroup.callAll('play', null, 'idel', 10, true);
+
+        //Animating drawbridge
+        drawbridge.animations.add('drop', [0,1,2]);
+        lever.animations.add('shift', [0,1,2]);
 
         //Set up camera
         game.camera.follow(Humphrey);
@@ -105,6 +129,8 @@ demo.state0.prototype = {
     update: function(){
         game.physics.arcade.collide(Humphrey, Land, function(){});
         game.physics.arcade.collide(assistantGroup, Land, function(){});
+        game.physics.arcade.collide(Humphrey, drawbridgeDown, function(){});
+        game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
         if(start == true){
@@ -188,6 +214,38 @@ demo.state0.prototype = {
             Winter.kill();
             Summer.revive();
             bg.loadTexture("SummerBg");
+        }
+        
+    },
+    hitLever: function(h, l) {
+        
+        if (game.time.now > nextShift) {
+            nextShift = game.time.now + shiftRate;
+            
+            if (lever.frame == 0) {
+                lever.animations.play('shift', 6, true);
+                lever.animations.stop('shift');
+                drawbridge.animations.play('drop', 6, true);
+                drawbridge.animations.stop('drop');
+                lever.frame = 2;
+                drawbridge.frame =2;
+    
+                drawbridgeDown = game.add.sprite(2140, 460, 'drawbridgeDown');
+                drawbridgeDown.anchor.setTo(0.5,0.5);
+                drawbridgeDown.scale.setTo(1.6,1.6);
+                drawbridgeDown.enableBody = true;
+                drawbridgeDown.physicsBodyType = Phaser.Physics.ARCADE;
+                game.physics.enable(drawbridgeDown);
+                drawbridgeDown.body.immovable = true;
+            }
+            else if (lever.frame == 2) {
+                lever.animations.play('shift', 6, true);
+                lever.animations.stop('shift');
+                lever.frame = 0;
+                drawbridge.frame = 0;
+                drawbridgeDown.visible = false;
+            };
+            
         }
         
     }
