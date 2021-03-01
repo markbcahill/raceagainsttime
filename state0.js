@@ -21,7 +21,7 @@ demo.state0.prototype = {
         game.load.image('winterTreeTiles', 'assets/tilemaps/winterTreeTiles.png');
         game.load.image('stall', 'assets/tilemaps/stall2.png');
         game.load.image('ice', 'assets/tilemaps/ice.png');
-        game.load.image('water', 'assets/tilemaps/WaterAnimated.png');
+        game.load.image('WaterAnimated', 'assets/tilemaps/WaterAnimated.png');
         game.load.spritesheet('Humphrey', 'assets/SpriteSheets/HumphreySpriteSheet.png', 350, 560);
         game.load.image('SummerBg', 'assets/backgrounds/SummerBackground.png');
         game.load.image('WinterBg', 'assets/backgrounds/WinterBackground.png');
@@ -48,7 +48,7 @@ demo.state0.prototype = {
         map.addTilesetImage('winterTreeTiles')
         map.addTilesetImage('stall');
         map.addTilesetImage('ice');
-        map.addTilesetImage('water');
+        map.addTilesetImage('WaterAnimated');
         
         Winter = map.createLayer('Winter'); 
         Winter.kill();
