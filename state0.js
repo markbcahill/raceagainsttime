@@ -9,7 +9,7 @@ var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
-var Winter;
+var Winter, Summer;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -18,7 +18,7 @@ demo.state0.prototype = {
         null, Phaser.Tilemap.TILED_JSON);
         game.load.image('GroundTileSet' , 'assets/tilemaps/GroundTileSet.png');
         game.load.image('treeTiles', 'assets/tilemaps/treeTiles.png');
-        game.load.image('winterTreeTiles', 'assets/tilemaps/winterTreeTiles.png');
+        //game.load.image('winterTreeTiles', 'assets/tilemaps/winterTreeTiles.png');
         game.load.image('stall', 'assets/tilemaps/stall2.png');
         game.load.image('ice', 'assets/tilemaps/ice.png');
         game.load.image('WaterAnimated', 'assets/tilemaps/WaterAnimated.png');
@@ -29,6 +29,7 @@ demo.state0.prototype = {
         game.load.spritesheet('lever', 'assets/SpriteSheets/lever.png', 240, 165);
         game.load.image('drawbridgeUp', 'assets/Sprites/drawbridgeUp.png',25,213);
         game.load.image('drawbridgeDown', 'assets/Sprites/drawbridgeDown.png',213,25);
+        game.load.image('WinterTree', 'assets/tilemaps/winterTreeTiles.png', 288, 288);
     },
     create: function(){
         //Start scene
@@ -45,13 +46,25 @@ demo.state0.prototype = {
         map = game.add.tilemap('LevelOne');
         map.addTilesetImage('GroundTileSet');
         map.addTilesetImage('treeTiles');
-        map.addTilesetImage('winterTreeTiles')
+        //map.addTilesetImage('winterTreeTiles')
         map.addTilesetImage('stall');
         map.addTilesetImage('ice');
         map.addTilesetImage('WaterAnimated');
         
         Winter = map.createLayer('Winter'); 
         Winter.kill();
+        
+        WinterTree = game.add.sprite(1140, 565, 'WinterTree');
+        WinterTree.visible = false
+        WinterTree.anchor.setTo(0.5,0.5);
+        WinterTree.scale.setTo(1.0);
+        WinterTree.enableBody = true;
+        WinterTree.physicsBodyType = Phaser.Physics.ARCADE;
+        game.physics.enable(WinterTree);
+        WinterTree.body.immovable = true;
+        WinterTree.body.setSize(168, 190, 50, 25);
+        
+        
         Summer = map.createLayer('Summer');
         Land = map.createLayer('Base');
         Land.resizeWorld();
@@ -114,10 +127,15 @@ demo.state0.prototype = {
 
         //Animating lever
         lever.animations.add('shift', [0,1,2]);
-        
-        //Set collisions between Humprey and tree
-        map.setCollisionBetween(94, 97, true, 'Winter');
-        map.forEach(function(tile) {  if (tile.index === 94 || tile.index === 95 || tile.index === 96 || tile.index === 97) {    tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+    
+        //Set collisions between Humprey and tilemap
+        //stall
+        map.setCollisionBetween(100, 108, true, 'Summer');
+        //ice
+        map.setCollisionBetween(96, 98, true, 'Winter');
+        //tree
+        //map.setCollisionBetween(94,96, true, 'Winter');
+        //map.forEach(function(tile) {  if (tile.index === 94 || tile.index === 95 || tile.index === 96 || tile.index === 97) {    tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
 
 
         //Set up camera
@@ -143,6 +161,8 @@ demo.state0.prototype = {
         game.physics.arcade.collide(Humphrey, drawbridge, function(){});
         game.physics.arcade.collide(Humphrey, drawbridgeDown, function(){});
         game.physics.arcade.collide(Humphrey, Winter, function(){});
+        game.physics.arcade.collide(Humphrey, WinterTree, function(){});
+        game.physics.arcade.collide(Humphrey, Summer, function(){});
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
@@ -220,6 +240,7 @@ demo.state0.prototype = {
             Summer.kill();
             Winter.revive();
             bg.loadTexture("WinterBg");
+            WinterTree.visible = true;
         }
         else{
             map.swap(3,1);
@@ -227,6 +248,7 @@ demo.state0.prototype = {
             Winter.kill();
             Summer.revive();
             bg.loadTexture("SummerBg");
+            WinterTree.visible = false;
         }
         
     },
