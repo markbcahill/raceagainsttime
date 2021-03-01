@@ -4,6 +4,7 @@ var Humphrey, vel = 400, humScale = .2, increment = 2;
 var assistant, assistantGroup, assistScale = .2;
 var map;
 var bg;
+var LevelTime = 5, sec = 0, mil = 0, start = false;
 var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
@@ -85,6 +86,11 @@ demo.state0.prototype = {
         game.camera.follow(Humphrey);
         //game.camera.deadzone = new Phaser.Rectangle(centerX - 300, 0, 300, 300);
 
+        //Set up timer
+        timer = game.add.text(game.camera.x+100, game.camera.y+200, LevelTime + ":" + sec + ":" + mil);
+        timer.fixedToCamera = true;
+        timer.cameraOffset.setTo(500,0);
+
         //Set up score
         score = game.add.text(game.camera.x+200, game.camera.y+200, 'assistants:' + assistants);
         score.fixedToCamera = true;
@@ -98,9 +104,25 @@ demo.state0.prototype = {
         game.physics.arcade.collide(assistantGroup, Land, function(){});
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
+        if(start == true){
+            if(LevelTime == 0){
+                start == false;
+            }
+            if(sec == 0){
+                LevelTime -= 1;
+                sec = 60;
+            }
+            if(mil == 0){
+                sec -= 1;
+                mil = 60;
+            }
+            mil -= 1;
+            timer.setText(LevelTime + ":" + sec + ":" + mil);
+        }
         //Walk animiation
         if(cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
             Humphrey.animations.play('walk', 10, true);
+            start = true;
             // if(Humphrey.angle >= 15 || Humphrey.angle <= -15){
             //     increment = increment * -1;
             // }
