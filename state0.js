@@ -1,15 +1,14 @@
 var demo = {};
 var centerX = 800/2, centerY = 800/2;
-var Humphrey, vel = 400, humScale = .2, increment = 2;
+var Humphrey, vel = 400, humScale = .2, increment = 2, playerDead;
 var assistant, assistantGroup, assistScale = .2;
 var map;
 var bg;
 //Timer Variables
-var LevelTime = 5, sec = 0, mil = 0, start = false;
-var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText;
+var LevelTime = 5, sec = 0, mil = 0, runTimer = false;
+var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText, killBtn;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
-
 var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
 var sound;
 
@@ -83,6 +82,7 @@ demo.state0.prototype = {
         Humphrey.scale.setTo(humScale,humScale);
         game.physics.enable(Humphrey);
         Humphrey.body.gravity.y = 1500;
+        playerDead = false;
         //Humphrey.body.bounce.y = .3;
         Humphrey.body.drag.x = 600;
         Humphrey.body.collideWorldBounds = true;
@@ -95,6 +95,8 @@ demo.state0.prototype = {
         pauseBtn = game.input.keyboard.addKey(Phaser.Keyboard.P);
         pauseBtn.onDown.add(this.pauseGame);
         game.input.onDown.add(unpause, self);
+        killBtn = game.input.keyboard.addKey(Phaser.Keyboard.K);
+        killBtn.onDown.add(this.killPlayer);
 
         //Create assistants
         assistantGroup = game.add.group();
@@ -175,69 +177,77 @@ demo.state0.prototype = {
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
-        if(assistants >= 5){
-            start = false;
-        }
-
-        //Game timer
-        if(start == true){
-            if(LevelTime == 0){
-                start == false;
+        if(playerDead == true){
+            if (spacebar.isDown){
+                game.paused = false;
+                game.state.start('state0');  
             }
-            if(sec == 0){
-                LevelTime -= 1;
-                sec = 60;
-            }
-            if(mil == 0){
-                sec -= 1;
-                mil = 60;
-            }
-            mil -= 1;
-            timer.setText(LevelTime + ":" + sec + ":" + mil);
-        }
-        //Walk animiation
-        if(cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
-            Humphrey.animations.play('walk', 10, true);
-            start = true;
-            // if(Humphrey.angle >= 15 || Humphrey.angle <= -15){
-            //     increment = increment * -1;
-            // }
-            // Humphrey.angle = Humphrey.angle + increment;  
         }
         else{
-            Humphrey.animations.stop('walk');
-            Humphrey.frame = 0;
-            // Humphrey.angle = 0;
-        }
+            if(assistants >= 5){
+                runTimer = false;
+            }
 
-        //Movement 
-        if(cursors.up.isDown && Humphrey.body.onFloor() && game.time.now > jumpTimer){
-            Humphrey.body.velocity.y = -jumpVelocity;
-            jumpTimer = game.time.now + jumpDelay;
-        }
-        
-        if(cursors.left.isDown){
-            Humphrey.body.velocity.x = -vel;
-            Humphrey.scale.setTo(-humScale,humScale);
+            //Game timer
+            if(runTimer == true){
+                if(LevelTime == 0){
+                    runTimer == false;
+                }
+                if(sec == 0){
+                    LevelTime -= 1;
+                    sec = 60;
+                }
+                if(mil == 0){
+                    sec -= 1;
+                    mil = 60;
+                }
+                mil -= 1;
+                timer.setText(LevelTime + ":" + sec + ":" + mil);
+            }
+            //Walk animiation
+            if(cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
+                Humphrey.animations.play('walk', 10, true);
+                runTimer = true;
+                // if(Humphrey.angle >= 15 || Humphrey.angle <= -15){
+                //     increment = increment * -1;
+                // }
+                // Humphrey.angle = Humphrey.angle + increment;  
+            }
+            else{
+                Humphrey.animations.stop('walk');
+                Humphrey.frame = 0;
+                // Humphrey.angle = 0;
+            }
+
+            //Movement 
+            if(cursors.up.isDown && Humphrey.body.onFloor() && game.time.now > jumpTimer){
+                Humphrey.body.velocity.y = -jumpVelocity;
+                jumpTimer = game.time.now + jumpDelay;
+            }
             
-        }
-        else if(cursors.right.isDown){
-            Humphrey.body.velocity.x = vel;
-            Humphrey.scale.setTo(humScale,humScale);
-        }
-        else{
-            Humphrey.body.velocity.x = 0;
-        }
-        // //Check to leave Area
-        // if(Humphrey.x < 150 || Humphrey.x > 2600){
-        //     this.leaveArea();
-        // }
-        // else{
-        //     helpText.setText('')
-        // }
+            if(cursors.left.isDown){
+                Humphrey.body.velocity.x = -vel;
+                Humphrey.scale.setTo(-humScale,humScale);
+                
+            }
+            else if(cursors.right.isDown){
+                Humphrey.body.velocity.x = vel;
+                Humphrey.scale.setTo(humScale,humScale);
+            }
+            else{
+                Humphrey.body.velocity.x = 0;
+            }
+            // //Check to leave Area
+            // if(Humphrey.x < 150 || Humphrey.x > 2600){
+            //     this.leaveArea();
+            // }
+            // else{
+            //     helpText.setText('')
+            // }
 
-        //Check for assistant Pick up
-        game.physics.arcade.overlap(Humphrey, assistantGroup, this.collectassistant);
+            //Check for assistant Pick up
+            game.physics.arcade.overlap(Humphrey, assistantGroup, this.collectassistant);
+        }
     },
     collectassistant: function(M, p){
         assistants += 1;
@@ -310,6 +320,18 @@ demo.state0.prototype = {
             game.paused = false;
             pauseText.setText('');
         }
+    },
+    killPlayer: function(){
+        game.add.tween(Humphrey).to({y: Humphrey.y - 200}, 100, 'Linear', true);
+        Humphrey.angle = 90;
+        gameOverText = game.add.text(centerX / 2 , centerY / 2, 'Score: '+assistants+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'});    
+        gameOverText.anchor.setTo(0.5, 0.5);  
+        gameOverText.fixedToCamera = true;
+        assistants = 0;    
+        playerDead = true;
+        runTimer = false;
+
+
     }
     // leaveArea: function(){
     //     helpText.x = Humphrey.x-100;
