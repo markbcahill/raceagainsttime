@@ -146,6 +146,10 @@ demo.state0.prototype = {
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
+        if(assistants >= 5){
+            start = false;
+        }
+
         if(start == true){
             if(LevelTime == 0){
                 start == false;
@@ -210,6 +214,7 @@ demo.state0.prototype = {
         p.kill();
         score.setText('assistants:' + assistants);
         console.log(assistantGroup.getIndex(p));
+        
     },
     changeTime: function(){
         console.log('spacebar');
