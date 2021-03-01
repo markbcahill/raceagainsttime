@@ -1,9 +1,9 @@
 var demo = {};
-var centerX = 1500/2, centerY = 1000/2;
+var centerX = 800/2, centerY = 800/2;
 var Michael, vel = 400, scaleNum = .2, increment = 2;
 var poro, poroGroup;
 var map;
-var Land;
+var Land, Slopes;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 750, jumpDelay = 500;
 
@@ -13,7 +13,6 @@ demo.state0.prototype = {
         game.load.tilemap('Runeterra', 'assets/tilemaps/FirstLevel.json', 
         null, Phaser.Tilemap.TILED_JSON);
         game.load.image('GroundTileSet' , 'assets/tilemaps/GroundTileSet.png');
-        //game.load.image('Michael','assets/Sprites/Michael.png');
         game.load.spritesheet('Michael', 'assets/SpriteSheets/MichaelSpriteSheet.png', 320, 320);
         game.load.image('SR', 'assets/backgrounds/BandalCity.png');
         game.load.spritesheet('Poro', 'assets/SpriteSheets/PoroSpriteSheet.png', 320, 320);
@@ -23,16 +22,19 @@ demo.state0.prototype = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#80ff80';
         addChangeStateEventLister();
-        game.world.setBounds(0,0, 640, 640);
+        game.world.setBounds(0,0, 3200, 800);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //var bg = game.add.sprite(0,0, 'SR');
+        var bg = game.add.sprite(0,0, 'SR');
 
         map = game.add.tilemap('Runeterra');
         map.addTilesetImage('GroundTileSet');
-
+        
         Land = map.createLayer('Land');
+        Land.resizeWorld();
 
-        map.setCollisionBetween(1, 10, true, Land);
+        Slopes = map.createLayer('Slopes');
+
+        map.setCollisionBetween(1, 5, true, Land);
 
         //Create Michael
         Michael = game.add.sprite(centerX, centerY - 100, 'Michael');
@@ -70,7 +72,7 @@ demo.state0.prototype = {
 
         //Set up camera
         game.camera.follow(Michael);
-        game.camera.deadzone = new Phaser.Rectangle(centerX - 300, 0, 600, 1000);
+        //game.camera.deadzone = new Phaser.Rectangle(centerX - 300, 0, 300, 300);
 
         //Set up score
         score = game.add.text(game.camera.x+200, game.camera.y+200, 'Poros:' + poros);
@@ -81,8 +83,9 @@ demo.state0.prototype = {
         // helpText = game.add.text(game.camera.x+200, game.camera.y+200, '');
     },
     update: function(){
-        game.physics.arcade.collide(Michael, Land, function(){touchingGround = true});
+        game.physics.arcade.collide(Michael, Land, function(){});
         game.physics.arcade.collide(poroGroup, Land, function(){});
+        //Michael.body.aabb.collideAABBVsTile(Slopes)
 
         //Walk animiation
         if(cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
@@ -133,7 +136,6 @@ demo.state0.prototype = {
         p.kill();
         score.setText('Poros:' + poros);
         console.log(poroGroup.getIndex(p));
-        poroArry[poroGroup.getIndex(p)] = 1;
     },
     // leaveArea: function(){
     //     helpText.x = Michael.x-100;
