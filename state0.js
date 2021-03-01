@@ -6,7 +6,7 @@ var map;
 var bg;
 //Timer Variables
 var LevelTime = 5, sec = 0, mil = 0, start = false;
-var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar;
+var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 
@@ -92,6 +92,9 @@ demo.state0.prototype = {
         cursors = game.input.keyboard.createCursorKeys();
         spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spacebar.onDown.add(this.changeTime);
+        pauseBtn = game.input.keyboard.addKey(Phaser.Keyboard.P);
+        pauseBtn.onDown.add(this.pauseGame);
+        game.input.onDown.add(unpause, self);
 
         //Create assistants
         assistantGroup = game.add.group();
@@ -295,6 +298,18 @@ demo.state0.prototype = {
             
         }
         
+    },
+    pauseGame: function(){
+        
+        if(game.paused == false){
+            console.log('pause');
+            game.paused = true;
+            pauseText = game.add.text(game.camera.x+400, game.camera.y+400, 'Paused');
+        }
+        else if(game.paused == true){
+            game.paused = false;
+            pauseText.setText('');
+        }
     }
     // leaveArea: function(){
     //     helpText.x = Humphrey.x-100;
@@ -316,6 +331,12 @@ function addKeyCallback(key, fn, args){
     game.input.keyboard.addKey(key).onDown.add(fn, null, null, args);
 
 }
+
+function unpause(event){
+    // Only act if paused
+    game.paused = false;
+    
+};
 
 function addChangeStateEventLister(){
     addKeyCallback(Phaser.Keyboard.ZERO, changeState, 0);
