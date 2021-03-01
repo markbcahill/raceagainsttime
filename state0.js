@@ -11,6 +11,7 @@ var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar;
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 
 var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
+var sound;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -31,6 +32,8 @@ demo.state0.prototype = {
         game.load.image('drawbridgeUp', 'assets/Sprites/drawbridgeUp.png',25,213);
         game.load.image('drawbridgeDown', 'assets/Sprites/drawbridgeDown.png',213,25);
         game.load.image('WinterTree', 'assets/tilemaps/winterTreeTiles.png', 288, 288);
+        
+        game.load.audio('ding','assets/sounds/ding.mp3');
     },
     create: function(){
         //Start scene
@@ -42,6 +45,9 @@ demo.state0.prototype = {
         bg = game.add.sprite(0,0);
         bg.loadTexture('WinterBg');
         bg.loadTexture('SummerBg');
+        
+        //sound
+        sound = game.add.audio('ding');
 
         map = game.add.tilemap('LevelOne');
         map.addTilesetImage('GroundTileSet');
@@ -235,6 +241,7 @@ demo.state0.prototype = {
         p.kill();
         score.setText('assistants:' + assistants);
         console.log(assistantGroup.getIndex(p));
+        sound.play();
         
     },
     changeTime: function(){
