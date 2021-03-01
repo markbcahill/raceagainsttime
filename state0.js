@@ -70,9 +70,11 @@ demo.state0.prototype = {
         game.physics.enable(assistantGroup);
 
         //Place in world according to save state
-        assistantGroup.create(150, 200, 'assistant');
-        assistantGroup.create(325, 300, 'assistant');
-        assistantGroup.create(550, 400, 'assistant'); 
+        assistantGroup.create(150, 500, 'assistant');
+        //assistantGroup.create(325, 300, 'assistant');
+        assistantGroup.create(550, 500, 'assistant'); 
+        assistantGroup.create(1000, 500, 'assistant');
+        assistantGroup.create(1500, 500, 'assistant');
 
         //Animate assistants
         assistantGroup.setAll('body.gravity.y', 500);
