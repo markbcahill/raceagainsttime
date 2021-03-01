@@ -3,7 +3,7 @@ var centerX = 800/2, centerY = 800/2;
 var Humphrey, vel = 400, humScale = .2, increment = 2;
 var assistant, assistantGroup, assistScale = .2;
 var map;
-var Land, Slopes;
+var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 
@@ -46,10 +46,11 @@ demo.state0.prototype = {
         Humphrey.body.drag.x = 600;
         Humphrey.body.collideWorldBounds = true;
         Humphrey.animations.add('walk', [0,1,2,3]);
+
+        //Add input
         cursors = game.input.keyboard.createCursorKeys();
-        // assistant = game.add.sprite(750, 750, 'assistant');
-        // assistant.scale.setTo(.3,.3);
-        // game.physics.enable(assistant);
+        spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        spacebar.onDown.add(this.changeTime);
 
         //Create assistants
         assistantGroup = game.add.group();
@@ -119,7 +120,6 @@ demo.state0.prototype = {
         else{
             Humphrey.body.velocity.x = 0;
         }
-
         // //Check to leave Area
         // if(Humphrey.x < 150 || Humphrey.x > 2600){
         //     this.leaveArea();
@@ -137,6 +137,19 @@ demo.state0.prototype = {
         score.setText('assistants:' + assistants);
         console.log(assistantGroup.getIndex(p));
     },
+    changeTime: function(){
+        console.log('spacebar');
+        console.log(map.currentLayer);
+        if(CurrentTime == 1){
+            map.swap(1, 3);
+            CurrentTime = 3;
+        }
+        else{
+            map.swap(3,1);
+            CurrentTime = 1;
+        }
+        
+    }
     // leaveArea: function(){
     //     helpText.x = Humphrey.x-100;
     //     helpText.y = Humphrey.y-200;
@@ -144,11 +157,9 @@ demo.state0.prototype = {
     //     if(game.input.keyboard.isDown(Phaser.Keyboard.E)){
     //         changeState(null, 1);
     //         helpText.setText('');
-    //     }
+    //     } 
     // }
 };
-
-
 function changeState(i, stateNum){
     console.log('State' + stateNum);
     game.state.start('state' + stateNum);
