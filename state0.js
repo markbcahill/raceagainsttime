@@ -1,7 +1,7 @@
 var demo = {};
 var centerX = 800/2, centerY = 800/2;
-var Michael, vel = 400, scaleNum = .2, increment = 2;
-var poro, poroGroup;
+var Humphrey, vel = 400, humScale = .2, increment = 2;
+var assistant, assistantGroup, assistScale = .2;
 var map;
 var Land, Slopes;
 //Jumping Variables
@@ -10,12 +10,12 @@ var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
-        game.load.tilemap('Runeterra', 'assets/tilemaps/FirstLevel.json', 
+        game.load.tilemap('LevelOne', 'assets/tilemaps/FirstLevel.json', 
         null, Phaser.Tilemap.TILED_JSON);
         game.load.image('GroundTileSet' , 'assets/tilemaps/GroundTileSet.png');
-        game.load.spritesheet('Michael', 'assets/SpriteSheets/MichaelSpriteSheet.png', 320, 320);
+        game.load.spritesheet('Humphrey', 'assets/SpriteSheets/HumphreySpriteSheet.png', 356, 549);
         game.load.image('SR', 'assets/backgrounds/BandalCity.png');
-        game.load.spritesheet('Poro', 'assets/SpriteSheets/PoroSpriteSheet.png', 320, 320);
+        game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 531);
     },
     create: function(){
         //Start scene
@@ -26,7 +26,7 @@ demo.state0.prototype = {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         var bg = game.add.sprite(0,0, 'SR');
 
-        map = game.add.tilemap('Runeterra');
+        map = game.add.tilemap('LevelOne');
         map.addTilesetImage('GroundTileSet');
         
         Land = map.createLayer('Land');
@@ -36,46 +36,46 @@ demo.state0.prototype = {
 
         map.setCollisionBetween(1, 5, true, Land);
 
-        //Create Michael
-        Michael = game.add.sprite(centerX, centerY - 100, 'Michael');
-        Michael.anchor.setTo(0.5,0.5);
-        Michael.scale.setTo(.2,.2);
-        game.physics.enable(Michael);
-        Michael.body.gravity.y = 1500;
-        //Michael.body.bounce.y = .3;
-        Michael.body.drag.x = 600;
-        Michael.body.collideWorldBounds = true;
-        Michael.animations.add('walk', [0,1,2,3]);
+        //Create Humphrey
+        Humphrey = game.add.sprite(centerX, centerY - 100, 'Humphrey');
+        Humphrey.anchor.setTo(0.5,0.5);
+        Humphrey.scale.setTo(humScale,humScale);
+        game.physics.enable(Humphrey);
+        Humphrey.body.gravity.y = 1500;
+        //Humphrey.body.bounce.y = .3;
+        Humphrey.body.drag.x = 600;
+        Humphrey.body.collideWorldBounds = true;
+        Humphrey.animations.add('walk', [0,1,2,3]);
         cursors = game.input.keyboard.createCursorKeys();
-        // poro = game.add.sprite(750, 750, 'Poro');
-        // poro.scale.setTo(.3,.3);
-        // game.physics.enable(poro);
+        // assistant = game.add.sprite(750, 750, 'assistant');
+        // assistant.scale.setTo(.3,.3);
+        // game.physics.enable(assistant);
 
-        //Create poros
-        poroGroup = game.add.group();
-        poroGroup.enableBody = true;
-        poroGroup.physicsBodyType = Phaser.Physics.ARCADE;
-        game.physics.enable(poroGroup);
+        //Create assistants
+        assistantGroup = game.add.group();
+        assistantGroup.enableBody = true;
+        assistantGroup.physicsBodyType = Phaser.Physics.ARCADE;
+        game.physics.enable(assistantGroup);
 
         //Place in world according to save state
-        poroGroup.create(150, 200, 'Poro');
-        poroGroup.create(325, 300, 'Poro');
-        poroGroup.create(550, 400, 'Poro'); 
+        assistantGroup.create(150, 200, 'assistant');
+        assistantGroup.create(325, 300, 'assistant');
+        assistantGroup.create(550, 400, 'assistant'); 
 
-        //Animate Poros
-        poroGroup.setAll('body.gravity.y', 500);
-        poroGroup.setAll('body.bounce.y', .2);
-        poroGroup.setAll('scale.x', .3);
-        poroGroup.setAll('scale.y', .3);
-        poroGroup.callAll('animations.add', 'animations', 'idel', [0,1,2,3,4,5,6,7,8,9]);
-        poroGroup.callAll('play', null, 'idel', 6, true);
+        //Animate assistants
+        assistantGroup.setAll('body.gravity.y', 500);
+        assistantGroup.setAll('body.bounce.y', .2);
+        assistantGroup.setAll('scale.x', assistScale);
+        assistantGroup.setAll('scale.y', assistScale);
+        assistantGroup.callAll('animations.add', 'animations', 'idel', [0,1]);
+        assistantGroup.callAll('play', null, 'idel', 6, true);
 
         //Set up camera
-        game.camera.follow(Michael);
+        game.camera.follow(Humphrey);
         //game.camera.deadzone = new Phaser.Rectangle(centerX - 300, 0, 300, 300);
 
         //Set up score
-        score = game.add.text(game.camera.x+200, game.camera.y+200, 'Poros:' + poros);
+        score = game.add.text(game.camera.x+200, game.camera.y+200, 'assistants:' + assistants);
         score.fixedToCamera = true;
         score.cameraOffset.setTo(600,0);
 
@@ -83,63 +83,63 @@ demo.state0.prototype = {
         // helpText = game.add.text(game.camera.x+200, game.camera.y+200, '');
     },
     update: function(){
-        game.physics.arcade.collide(Michael, Land, function(){});
-        game.physics.arcade.collide(poroGroup, Land, function(){});
-        //Michael.body.aabb.collideAABBVsTile(Slopes)
+        game.physics.arcade.collide(Humphrey, Land, function(){});
+        game.physics.arcade.collide(assistantGroup, Land, function(){});
+        //Humphrey.body.aabb.collideAABBVsTile(Slopes)
 
         //Walk animiation
         if(cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
-            Michael.animations.play('walk', 12, true);
-            if(Michael.angle >= 15 || Michael.angle <= -15){
-                increment = increment * -1;
-            }
-            Michael.angle = Michael.angle + increment;  
+            Humphrey.animations.play('walk', 6, true);
+            // if(Humphrey.angle >= 15 || Humphrey.angle <= -15){
+            //     increment = increment * -1;
+            // }
+            // Humphrey.angle = Humphrey.angle + increment;  
         }
         else{
-            Michael.animations.stop('walk');
-            Michael.frame = 0;
-            Michael.angle = 0;
+            Humphrey.animations.stop('walk');
+            Humphrey.frame = 0;
+            // Humphrey.angle = 0;
         }
 
         //Movement 
-        if(cursors.up.isDown && Michael.body.onFloor() && game.time.now > jumpTimer){
-            Michael.body.velocity.y = -jumpVelocity;
+        if(cursors.up.isDown && Humphrey.body.onFloor() && game.time.now > jumpTimer){
+            Humphrey.body.velocity.y = -jumpVelocity;
             jumpTimer = game.time.now + jumpDelay;
         }
         
         if(cursors.left.isDown){
-            Michael.body.velocity.x = -vel;
-            Michael.scale.setTo(-.2,.2);
+            Humphrey.body.velocity.x = -vel;
+            Humphrey.scale.setTo(-humScale,humScale);
             
         }
         else if(cursors.right.isDown){
-            Michael.body.velocity.x = vel;
-            Michael.scale.setTo(.2,.2);
+            Humphrey.body.velocity.x = vel;
+            Humphrey.scale.setTo(humScale,humScale);
         }
         else{
-            Michael.body.velocity.x = 0;
+            Humphrey.body.velocity.x = 0;
         }
 
         // //Check to leave Area
-        // if(Michael.x < 150 || Michael.x > 2600){
+        // if(Humphrey.x < 150 || Humphrey.x > 2600){
         //     this.leaveArea();
         // }
         // else{
         //     helpText.setText('')
         // }
 
-        //Check for Poro Pick up
-        game.physics.arcade.overlap(Michael, poroGroup, this.collectPoro);
+        //Check for assistant Pick up
+        game.physics.arcade.overlap(Humphrey, assistantGroup, this.collectassistant);
     },
-    collectPoro: function(M, p){
-        poros += 1;
+    collectassistant: function(M, p){
+        assistants += 1;
         p.kill();
-        score.setText('Poros:' + poros);
-        console.log(poroGroup.getIndex(p));
+        score.setText('assistants:' + assistants);
+        console.log(assistantGroup.getIndex(p));
     },
     // leaveArea: function(){
-    //     helpText.x = Michael.x-100;
-    //     helpText.y = Michael.y-200;
+    //     helpText.x = Humphrey.x-100;
+    //     helpText.y = Humphrey.y-200;
     //     helpText.setText('Press E to exit');
     //     if(game.input.keyboard.isDown(Phaser.Keyboard.E)){
     //         changeState(null, 1);
