@@ -4,12 +4,13 @@ var Humphrey, vel = 400, humScale = .2, increment = 2;
 var assistant, assistantGroup, assistScale = .2;
 var map;
 var bg;
+//Timer Variables
 var LevelTime = 5, sec = 0, mil = 0, start = false;
-var Land, CurrentTime = 1, spacebar;
+var Land, Winter, CurrentTimeFrame = 1, spacebar;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
+
 var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
-var Winter;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -40,7 +41,6 @@ demo.state0.prototype = {
         bg = game.add.sprite(0,0);
         bg.loadTexture('WinterBg');
         bg.loadTexture('SummerBg');
-
 
         map = game.add.tilemap('LevelOne');
         map.addTilesetImage('GroundTileSet');
@@ -150,6 +150,7 @@ demo.state0.prototype = {
             start = false;
         }
 
+        //Game timer
         if(start == true){
             if(LevelTime == 0){
                 start == false;
@@ -219,16 +220,16 @@ demo.state0.prototype = {
     changeTime: function(){
         console.log('spacebar');
         console.log(map.currentLayer);
-        if(CurrentTime == 1){
+        if(CurrentTimeFrame == 1){
             map.swap(1, 3);
-            CurrentTime = 3;
+            CurrentTimeFrame = 3;
             Summer.kill();
             Winter.revive();
             bg.loadTexture("WinterBg");
         }
         else{
             map.swap(3,1);
-            CurrentTime = 1;
+            CurrentTimeFrame = 1;
             Winter.kill();
             Summer.revive();
             bg.loadTexture("SummerBg");
