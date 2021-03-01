@@ -5,7 +5,7 @@ var assistant, assistantGroup, assistScale = .2;
 var map;
 var Land, CurrentTime = 1, spacebar;
 //Jumping Variables
-var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
+var jumpTimer = 0, jumpVelocity = 250, jumpDelay = 500;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
