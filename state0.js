@@ -5,7 +5,8 @@ var assistant, assistantGroup, assistScale = .2;
 var map;
 var bg;
 //Timer Variables
-var LevelTime = 5, sec = 0, mil = 0, runTimer = false;
+var startingTime = 5;
+var LevelTime, sec, mil, runTimer = false;
 var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText, killBtn;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
@@ -45,6 +46,11 @@ demo.state0.prototype = {
         bg.loadTexture('WinterBg');
         bg.loadTexture('SummerBg');
         
+        LevelTime = startingTime;
+        sec = 0;
+        mil = 0; 
+        runTimer = false;
+
         //sound
         sound = game.add.audio('ding');
 
@@ -85,7 +91,7 @@ demo.state0.prototype = {
         playerDead = false;
         //Humphrey.body.bounce.y = .3;
         Humphrey.body.drag.x = 600;
-        Humphrey.body.collideWorldBounds = true;
+        //Humphrey.body.collideWorldBounds = true;
         Humphrey.animations.add('walk', [0,1,2,3]);
 
         //Add input
@@ -176,6 +182,9 @@ demo.state0.prototype = {
         game.physics.arcade.collide(Humphrey, Summer, function(){});
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
+        if(Humphrey.body.y >=800){
+            this.killPlayer();
+        }
 
         if(playerDead == true){
             if (spacebar.isDown){
