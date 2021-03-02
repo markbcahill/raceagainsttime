@@ -40,7 +40,7 @@ demo.state0.prototype = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#80ff80';
         addChangeStateEventLister();
-        game.world.setBounds(0,0, 3200, 800);
+        game.world.setBounds(0,0, 2800, 1200);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         bg = game.add.sprite(0,0);
         bg.loadTexture('WinterBg');
@@ -78,7 +78,7 @@ demo.state0.prototype = {
         
         Summer = map.createLayer('Summer');
         Land = map.createLayer('Base');
-        Land.resizeWorld();
+        //Land.resizeWorld();
 
         map.setCollisionBetween(1, 5, true, Land);
 
@@ -91,7 +91,7 @@ demo.state0.prototype = {
         playerDead = false;
         //Humphrey.body.bounce.y = .3;
         Humphrey.body.drag.x = 600;
-        //Humphrey.body.collideWorldBounds = true;
+        Humphrey.body.collideWorldBounds = true;
         Humphrey.animations.add('walk', [0,1,2,3]);
 
         //Add input
@@ -157,7 +157,7 @@ demo.state0.prototype = {
 
         //Set up camera
         game.camera.follow(Humphrey);
-        //game.camera.deadzone = new Phaser.Rectangle(centerX - 300, 0, 300, 300);
+        game.camera.deadzone = new Phaser.Rectangle(centerX, 0, 0, 12000);
 
         //Set up timer
         timer = game.add.text(game.camera.x+100, game.camera.y+200, LevelTime + ":" + sec + ":" + mil);
