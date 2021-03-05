@@ -87,8 +87,8 @@ demo.state0.prototype = {
         map.setCollisionBetween(1, 5, true, Land);
 
         //Create Humphrey
-        Humphrey = game.add.sprite(centerX, centerY - 100, 'Humphrey');
-        //map.createFromTiles(109, -1, 'Humphrey', 'SpawnTiles');
+        var tempObject = map.objects.SpawnLocation[0];
+        Humphrey = game.add.sprite(tempObject.x, tempObject.y, 'Humphrey');
         Humphrey.anchor.setTo(0.5,0.5);
         Humphrey.scale.setTo(humScale,humScale);
         game.physics.enable(Humphrey);
