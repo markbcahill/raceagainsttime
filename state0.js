@@ -32,6 +32,7 @@ demo.state0.prototype = {
         game.load.image('drawbridgeUp', 'assets/Sprites/drawbridgeUp.png',25,213);
         game.load.image('drawbridgeDown', 'assets/Sprites/drawbridgeDown.png',213,25);
         game.load.image('WinterTree', 'assets/tilemaps/winterTreeTiles.png', 288, 288);
+        //game.load.image('SpawnTiles', 'assets/tilemaps/SpawnTiles.png', 32, 32);
         
         game.load.audio('ding','assets/sounds/ding.mp3');
     },
@@ -40,7 +41,7 @@ demo.state0.prototype = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#80ff80';
         addChangeStateEventLister();
-        game.world.setBounds(0,0, 2800, 1200);
+        //game.world.setBounds(0,0, 3520, 960);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         bg = game.add.sprite(0,0);
         bg.loadTexture('WinterBg');
@@ -61,29 +62,33 @@ demo.state0.prototype = {
         map.addTilesetImage('stall');
         map.addTilesetImage('ice');
         map.addTilesetImage('WaterAnimated');
-        
+        //map.addTilesetImage('SpawnTiles');
+
+        //SpawnTiles = map.createLayer('SpawnTiles');
+        //SpawnTiles.kill();
+
         Winter = map.createLayer('Winter'); 
         Winter.kill();
-        
-        WinterTree = game.add.sprite(1140, 565, 'WinterTree');
-        WinterTree.visible = false
-        WinterTree.anchor.setTo(0.5,0.5);
-        WinterTree.scale.setTo(1.0);
-        WinterTree.enableBody = true;
-        WinterTree.physicsBodyType = Phaser.Physics.ARCADE;
-        game.physics.enable(WinterTree);
-        WinterTree.body.immovable = true;
-        WinterTree.body.setSize(168, 190, 50, 25);
+        // WinterTree = game.add.sprite(1140, 565, 'WinterTree');
+        // WinterTree.visible = false
+        // WinterTree.anchor.setTo(0.5,0.5);
+        // WinterTree.scale.setTo(1.0);
+        // WinterTree.enableBody = true;
+        // WinterTree.physicsBodyType = Phaser.Physics.ARCADE;
+        // game.physics.enable(WinterTree);
+        // WinterTree.body.immovable = true;
+        // WinterTree.body.setSize(168, 190, 50, 25);
         
         
         Summer = map.createLayer('Summer');
         Land = map.createLayer('Base');
-        //Land.resizeWorld();
+        Land.resizeWorld();
 
         map.setCollisionBetween(1, 5, true, Land);
 
         //Create Humphrey
         Humphrey = game.add.sprite(centerX, centerY - 100, 'Humphrey');
+        //map.createFromTiles(109, -1, 'Humphrey', 'SpawnTiles');
         Humphrey.anchor.setTo(0.5,0.5);
         Humphrey.scale.setTo(humScale,humScale);
         game.physics.enable(Humphrey);
@@ -126,13 +131,10 @@ demo.state0.prototype = {
         lever.physicsBodyType = Phaser.Physics.ARCADE;
         game.physics.enable(lever);
 
+
+
         //Place in world according to save state
-        assistantGroup.create(150, 500, 'assistant');
-        //assistantGroup.create(325, 300, 'assistant');
-        assistantGroup.create(550, 500, 'assistant'); 
-        assistantGroup.create(1000, 500, 'assistant');
-        assistantGroup.create(1400, 100, 'assistant');
-        assistantGroup.create(2400, 100, 'assistant');
+        map.createFromObjects('SpawnLocation', 'AssistantSpawn', 'assistant', 0, true,false, assistantGroup);
 
         //Animate assistants
         assistantGroup.setAll('body.gravity.y', 500);
@@ -157,7 +159,7 @@ demo.state0.prototype = {
 
         //Set up camera
         game.camera.follow(Humphrey);
-        game.camera.deadzone = new Phaser.Rectangle(centerX, 0, 0, 12000);
+        game.camera.deadzone = new Phaser.Rectangle(centerX, 0, 0, 640);
 
         //Set up timer
         timer = game.add.text(game.camera.x+100, game.camera.y+200, LevelTime + ":" + sec + ":" + mil);
@@ -178,11 +180,11 @@ demo.state0.prototype = {
         game.physics.arcade.collide(Humphrey, drawbridge, function(){});
         game.physics.arcade.collide(Humphrey, drawbridgeDown, function(){});
         game.physics.arcade.collide(Humphrey, Winter, function(){});
-        game.physics.arcade.collide(Humphrey, WinterTree, function(){});
+        //game.physics.arcade.collide(Humphrey, WinterTree, function(){});
         game.physics.arcade.collide(Humphrey, Summer, function(){});
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
-        if(Humphrey.body.y >=800){
+        if(Humphrey.body.y >=960){
             this.killPlayer();
         }
 
@@ -275,7 +277,7 @@ demo.state0.prototype = {
             Summer.kill();
             Winter.revive();
             bg.loadTexture("WinterBg");
-            WinterTree.visible = true;
+            //WinterTree.visible = true;
         }
         else{
             map.swap(3,1);
@@ -283,7 +285,7 @@ demo.state0.prototype = {
             Winter.kill();
             Summer.revive();
             bg.loadTexture("SummerBg");
-            WinterTree.visible = false;
+            //WinterTree.visible = false;
         }
         
     },
