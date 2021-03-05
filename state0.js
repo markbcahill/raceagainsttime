@@ -184,7 +184,16 @@ demo.state0.prototype = {
         game.physics.arcade.collide(Humphrey, Summer, function(){});
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
+        if(Humphrey.body.y >=800){
+            game.camera.unfollow();
+        }
+        else{
+            game.camera.follow(Humphrey);
+            game.camera.deadzone = new Phaser.Rectangle(centerX, 0, 0, 640);
+        }
+        
         if(Humphrey.body.y >=960){
+            game.camera.unfollow();
             this.killPlayer();
         }
 
