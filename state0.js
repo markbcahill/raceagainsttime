@@ -7,11 +7,11 @@ var bg;
 //Timer Variables
 var startingTime = 5;
 var LevelTime, sec, mil, runTimer = false;
-var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText, killBtn;
+var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText, killBtn, endText;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
-var drawbridge, drawbridgeDown, nextShift = 0, shiftRate=1000;
-var sound;
+var drawbridgeDown, nextShift = 0, shiftRate=1000;
+var sound, music;
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -21,7 +21,7 @@ demo.state0.prototype = {
         game.load.image('GroundTileSet' , 'assets/tilemaps/GroundTileSet.png');
         game.load.image('treeTiles', 'assets/tilemaps/treeTiles.png');
         //game.load.image('winterTreeTiles', 'assets/tilemaps/winterTreeTiles.png');
-        game.load.image('stall', 'assets/tilemaps/stall2.png');
+        game.load.image('stallTiles', 'assets/tilemaps/stallTiles.png');
         game.load.image('ice', 'assets/tilemaps/ice.png');
         game.load.image('WaterAnimated', 'assets/tilemaps/WaterAnimated.png');
         game.load.spritesheet('Humphrey', 'assets/SpriteSheets/HumphreySpriteSheet.png', 350, 560);
@@ -29,19 +29,21 @@ demo.state0.prototype = {
         game.load.image('WinterBg', 'assets/backgrounds/WinterBackground.png');
         game.load.spritesheet('assistant', 'assets/SpriteSheets/AssistantsSpriteSheet.png', 350, 560);
         game.load.spritesheet('lever', 'assets/SpriteSheets/lever.png', 240, 165);
-        game.load.image('drawbridgeUp', 'assets/Sprites/drawbridgeUp.png',25,213);
+        //game.load.image('drawbridgeUp', 'assets/Sprites/drawbridgeUp.png',25,213);
         game.load.image('drawbridgeDown', 'assets/Sprites/drawbridgeDown.png',213,25);
-        game.load.image('WinterTree', 'assets/tilemaps/winterTreeTiles.png', 288, 288);
+        game.load.image('winterTreeTiles', 'assets/tilemaps/winterTreeTiles.png', 288, 288);
         //game.load.image('SpawnTiles', 'assets/tilemaps/SpawnTiles.png', 32, 32);
         
         game.load.audio('ding','assets/sounds/ding.mp3');
+        game.load.audio('music', 'assets/sounds/music.mp3');
+        
     },
     create: function(){
         //Start scene
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#80ff80';
         addChangeStateEventLister();
-        //game.world.setBounds(0,0, 3520, 960);
+        //game.world.setBounds(0,0, 3520, 1280);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         bg = game.add.sprite(0,0);
         bg.loadTexture('WinterBg');
@@ -54,12 +56,14 @@ demo.state0.prototype = {
 
         //sound
         sound = game.add.audio('ding');
+        music = game.add.audio('music');
+        music.play();
 
         map = game.add.tilemap('LevelOne');
         map.addTilesetImage('GroundTileSet');
         map.addTilesetImage('treeTiles');
-        //map.addTilesetImage('winterTreeTiles')
-        map.addTilesetImage('stall');
+        map.addTilesetImage('winterTreeTiles')
+        map.addTilesetImage('stallTiles');
         map.addTilesetImage('ice');
         map.addTilesetImage('WaterAnimated');
         //map.addTilesetImage('SpawnTiles');
@@ -116,15 +120,15 @@ demo.state0.prototype = {
         game.physics.enable(assistantGroup);
     
         //Add drawbridge/lever
-        drawbridge = game.add.sprite(2290, 300, 'drawbridgeUp');
+        /*drawbridge = game.add.sprite(2500, 270, 'drawbridgeUp');
         drawbridge.anchor.setTo(0.5,0.5);
-        drawbridge.scale.setTo(1.6,1.6);
+        drawbridge.scale.setTo(2,);
         drawbridge.enableBody = true;
         drawbridge.physicsBodyType = Phaser.Physics.ARCADE;
         game.physics.enable(drawbridge);
-        drawbridge.body.immovable = true;
+        drawbridge.body.immovable = true;*/
         
-        lever = game.add.sprite(1625, 195, 'lever');
+        lever = game.add.sprite(2070, 100, 'lever');
         lever.anchor.setTo(0.5,0.5);
         lever.scale.setTo(0.4,0.4);
         lever.enableBody = true;
@@ -151,10 +155,30 @@ demo.state0.prototype = {
         //stall
         map.setCollisionBetween(100, 108, true, 'Summer');
         //ice
-        map.setCollisionBetween(96, 98, true, 'Winter');
+        map.setCollisionBetween(15,18, true, 'Winter');
         //tree
-        //map.setCollisionBetween(94,96, true, 'Winter');
-        //map.forEach(function(tile) {  if (tile.index === 94 || tile.index === 95 || tile.index === 96 || tile.index === 97) {    tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        map.setCollisionBetween(27, 28, true, 'Winter');
+        map.setCollisionBetween(33, 34, true, 'Winter');
+        map.setCollisionBetween(39, 41, true, 'Winter');
+        map.setCollisionBetween(54, 56, true, 'Winter');
+        map.setCollisionBetween(83, 84, true, 'Winter');
+        map.setCollisionBetween(87, 88, true, 'Winter');
+        
+        map.forEach(function(tile) {if (tile.index === 27 || tile.index === 28) {
+                tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        map.forEach(function(tile) {if (tile.index === 33 || tile.index === 34) {
+                tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        map.forEach(function(tile) {if (tile.index === 39 || tile.index === 40 || tile.index === 41) {
+                tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        map.forEach(function(tile) {if (tile.index === 54 || tile.index === 55 || tile.index === 56) {
+                tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        map.forEach(function(tile) {if (tile.index === 83 || tile.index === 84) {
+                tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        map.forEach(function(tile) {if (tile.index === 87 || tile.index === 88) {
+                tile.collideDown = false;  }}, this, 0, 0, map.width, map.height, Winter);
+        
+        //stall
+        map.setCollisionBetween(264,266, true, 'Summer');
 
 
         //Set up camera
@@ -177,7 +201,7 @@ demo.state0.prototype = {
     update: function(){
         game.physics.arcade.collide(Humphrey, Land, function(){});
         game.physics.arcade.collide(assistantGroup, Land, function(){});
-        game.physics.arcade.collide(Humphrey, drawbridge, function(){});
+        //game.physics.arcade.collide(Humphrey, drawbridge, function(){});
         game.physics.arcade.collide(Humphrey, drawbridgeDown, function(){});
         game.physics.arcade.collide(Humphrey, Winter, function(){});
         //game.physics.arcade.collide(Humphrey, WinterTree, function(){});
@@ -185,7 +209,7 @@ demo.state0.prototype = {
         game.physics.arcade.overlap(Humphrey, lever, this.hitLever);
         //Humphrey.body.aabb.collideAABBVsTile(Slopes)
         if(Humphrey.body.y >=800){
-            game.camera.unfollow();
+            //game.camera.unfollow();
         }
         else{
             game.camera.follow(Humphrey);
@@ -195,9 +219,11 @@ demo.state0.prototype = {
         if(Humphrey.body.y >=960){
             game.camera.unfollow();
             this.killPlayer();
+            music.stop();
         }
 
         if(playerDead == true){
+            music.stop()
             if (spacebar.isDown){
                 game.paused = false;
                 game.state.start('state0');  
@@ -206,6 +232,11 @@ demo.state0.prototype = {
         else{
             if(assistants >= 5){
                 runTimer = false;
+                endText = game.add.text(centerX / 2 , centerY / 2, 'Score: '+assistants+'\nCongratulations!\nYou collected all the assistants!\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#000', align: 'center'}); 
+                endText.anchor.setTo(0.5, 0.5);  
+                endText.fixedToCamera = true;
+                if (spacebar.isDown){
+                    game.state.start('state0');}
             }
 
             //Game timer
@@ -281,6 +312,7 @@ demo.state0.prototype = {
         console.log('spacebar');
         console.log(map.currentLayer);
         if(CurrentTimeFrame == 1){
+            console.log('winter');
             map.swap(1, 3);
             CurrentTimeFrame = 3;
             Summer.kill();
@@ -289,6 +321,7 @@ demo.state0.prototype = {
             //WinterTree.visible = true;
         }
         else{
+            console.log('summer');
             map.swap(3,1);
             CurrentTimeFrame = 1;
             Winter.kill();
@@ -306,12 +339,12 @@ demo.state0.prototype = {
             if (lever.frame == 0) {
                 lever.animations.play('shift', 6, true);
                 lever.animations.stop('shift');
-                drawbridge.visible =false;
+                //drawbridge.visible =false;
                 lever.frame = 2;
     
-                drawbridgeDown = game.add.sprite(2140, 460, 'drawbridgeDown');
+                drawbridgeDown = game.add.sprite(2780, 340, 'drawbridgeDown');
                 drawbridgeDown.anchor.setTo(0.5,0.5);
-                drawbridgeDown.scale.setTo(1.6,1.6);
+                drawbridgeDown.scale.setTo(1,1);
                 drawbridgeDown.enableBody = true;
                 drawbridgeDown.physicsBodyType = Phaser.Physics.ARCADE;
                 game.physics.enable(drawbridgeDown);
@@ -321,9 +354,9 @@ demo.state0.prototype = {
                 lever.animations.play('shift', 6, true);
                 lever.animations.stop('shift');
                 lever.frame = 0;
-                drawbridge.frame = 0;
+                //drawbridge.frame = 0;
                 drawbridgeDown.visible = false;
-                drawbridge.visible =true;
+                //drawbridge.visible =true;
             };
             
         }
@@ -342,7 +375,7 @@ demo.state0.prototype = {
         }
     },
     killPlayer: function(){
-        game.add.tween(Humphrey).to({y: Humphrey.y - 200}, 100, 'Linear', true);
+        game.add.tween(Humphrey).to({y: Humphrey.y - 800}, 10000, 'Linear', true);
         Humphrey.angle = 90;
         gameOverText = game.add.text(centerX / 2 , centerY / 2, 'Score: '+assistants+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'});    
         gameOverText.anchor.setTo(0.5, 0.5);  
