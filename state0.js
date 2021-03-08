@@ -48,7 +48,7 @@ demo.state0.prototype = {
         bg = game.add.sprite(0,0);
         bg.loadTexture('WinterBg');
         bg.loadTexture('SummerBg');
-        
+        assistants = 0;
         LevelTime = startingTime;
         sec = 0;
         mil = 0; 
@@ -195,6 +195,9 @@ demo.state0.prototype = {
         score.fixedToCamera = true;
         score.cameraOffset.setTo(600,0);
 
+        endText = game.add.text(game.camera.x+400, game.camera.y+400, " ");
+        endText.fixedToCamera = true;
+        endText.anchor.setTo(0.5, 0.5);
         // //Create help text
         // helpText = game.add.text(game.camera.x+200, game.camera.y+200, '');
     },
@@ -232,17 +235,18 @@ demo.state0.prototype = {
         else{
             if(assistants >= 5){
                 runTimer = false;
-                endText = game.add.text(centerX / 2 , centerY / 2, 'Score: '+assistants+'\nCongratulations!\nYou collected all the assistants!\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#000', align: 'center'}); 
-                endText.anchor.setTo(0.5, 0.5);  
-                endText.fixedToCamera = true;
+                music.stop();
+                endText.setText('Score: '+assistants+'\nCongratulations!\nYou collected all the assistants!\nPress SPACE to restart');                
                 if (spacebar.isDown){
-                    game.state.start('state0');}
+                    game.state.start('state0');
+                }
             }
 
             //Game timer
             if(runTimer == true){
                 if(LevelTime == 0){
                     runTimer == false;
+                    this.killPlayer();
                 }
                 if(sec == 0){
                     LevelTime -= 1;
@@ -375,6 +379,7 @@ demo.state0.prototype = {
         }
     },
     killPlayer: function(){
+        music.stop();
         game.add.tween(Humphrey).to({y: Humphrey.y - 800}, 10000, 'Linear', true);
         Humphrey.angle = 90;
         gameOverText = game.add.text(centerX / 2 , centerY / 2, 'Score: '+assistants+'\nGAME OVER\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#fff', align: 'center'});    
@@ -383,7 +388,6 @@ demo.state0.prototype = {
         assistants = 0;    
         playerDead = true;
         runTimer = false;
-
 
     }
     // leaveArea: function(){
