@@ -7,7 +7,7 @@ var bg;
 //Timer Variables
 var startingTime = 5;
 var LevelTime, sec, mil, runTimer = false;
-var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText, killBtn;
+var Land, Winter, Summer, CurrentTimeFrame = 1, spacebar, pauseBtn, pauseText, killBtn, endText;
 //Jumping Variables
 var jumpTimer = 0, jumpVelocity = 900, jumpDelay = 500;
 var drawbridgeDown, nextShift = 0, shiftRate=1000;
@@ -36,6 +36,7 @@ demo.state0.prototype = {
         
         game.load.audio('ding','assets/sounds/ding.mp3');
         game.load.audio('music', 'assets/sounds/music.mp3');
+        
     },
     create: function(){
         //Start scene
@@ -222,6 +223,7 @@ demo.state0.prototype = {
         }
 
         if(playerDead == true){
+            music.stop()
             if (spacebar.isDown){
                 game.paused = false;
                 game.state.start('state0');  
@@ -230,6 +232,11 @@ demo.state0.prototype = {
         else{
             if(assistants >= 5){
                 runTimer = false;
+                endText = game.add.text(centerX / 2 , centerY / 2, 'Score: '+assistants+'\nCongratulations!\nYou collected all the assistants!\nPress SPACE to restart',{ font: '22px Lucida Console', fill: '#000', align: 'center'}); 
+                endText.anchor.setTo(0.5, 0.5);  
+                endText.fixedToCamera = true;
+                if (spacebar.isDown){
+                    game.state.start('state0');}
             }
 
             //Game timer
@@ -335,7 +342,7 @@ demo.state0.prototype = {
                 //drawbridge.visible =false;
                 lever.frame = 2;
     
-                drawbridgeDown = game.add.sprite(2800, 320, 'drawbridgeDown');
+                drawbridgeDown = game.add.sprite(2780, 340, 'drawbridgeDown');
                 drawbridgeDown.anchor.setTo(0.5,0.5);
                 drawbridgeDown.scale.setTo(1,1);
                 drawbridgeDown.enableBody = true;
