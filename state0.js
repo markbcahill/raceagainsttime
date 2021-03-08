@@ -218,6 +218,7 @@ demo.state0.prototype = {
         if(Humphrey.body.y >=960){
             game.camera.unfollow();
             this.killPlayer();
+            music.stop();
         }
 
         if(playerDead == true){
