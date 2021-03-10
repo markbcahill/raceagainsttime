@@ -55,6 +55,12 @@
                  "height":75.7575757575758,
                  "id":1,
                  "name":"Player Spawn",
+                 "properties":[
+                        {
+                         "name":"Texture",
+                         "type":"string",
+                         "value":"Humphrey"
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -127,7 +133,7 @@
  "nextobjectid":16,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"2021.02.15",
+ "tiledversion":"1.4.3",
  "tileheight":32,
  "tilesets":[
         {
@@ -397,6 +403,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":1.5,
+ "version":1.4,
  "width":110
 }

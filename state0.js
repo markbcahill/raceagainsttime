@@ -92,7 +92,7 @@ demo.state0.prototype = {
 
         //Create Humphrey
         var tempObject = map.objects.SpawnLocation[0];
-        Humphrey = game.add.sprite(tempObject.x, tempObject.y, 'Humphrey');
+        Humphrey = game.add.sprite(tempObject.x, tempObject.y, tempObject.properties[0].value);
         Humphrey.anchor.setTo(0.5,0.5);
         Humphrey.scale.setTo(humScale,humScale);
         game.physics.enable(Humphrey);
